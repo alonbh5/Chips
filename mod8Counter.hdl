@@ -1,0 +1,25 @@
+/******************************************************************************
+  A simple mod-8 counter using D-FF units
+*******************************************************************************/
+
+CHIP mod8Counter {
+    IN	noinput;
+    OUT out[3];
+
+    PARTS:
+    Not(in=Q0, out=notQ0);
+    Not(in=Q2, out=notQ2);
+
+    Xor(a=Q1, b=Q0, out=D1);
+
+    Nand(a=Q1, b=Q0, out=Q0nandQ1); 
+    And(a=Q2, b=Q0nandQ1, out=D2a);   
+    And(a=Q1, b=Q0, out=Q1andQ0);
+    And(a=notQ2, b=Q1andQ0, out=D2b);
+    Or(a=D2a, b=D2b, out=D2);
+
+    DFF(in=notQ0, out=Q0, out=out[0]);
+    DFF(in=D1, out=Q1, out=out[1]);
+    DFF(in=D2, out=Q2, out=out[2]);
+    
+}

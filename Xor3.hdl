@@ -1,0 +1,14 @@
+
+/**
+ *  Exclusive-or3 gate: out = (a Xor b Xor c).
+ */
+
+CHIP Xor3 {
+    IN a, b, c;
+    OUT out;
+
+    PARTS:
+    Xor(a=a, b=b, out=axorb);
+    Xor(a=axorb, b=c, out=out);
+    
+}

@@ -1,0 +1,14 @@
+/**
+ *  SR-FF in which the race condition is solved by setting Q(t+1) = 0 when S=R=1 
+ */
+
+CHIP SRFF {
+    IN  S,R;
+    OUT out;
+
+    PARTS:
+    Or(a=S, b=Q, out=SorQ);
+	Not(in=R, out=notR);
+	And(a=SorQ, b=notR, out=d);
+	DFF(in=d, out=Q, out=out);
+}

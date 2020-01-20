@@ -1,0 +1,58 @@
+/**
+ *  A ROM having 8 words of length 2
+ *  The inputs FXfuse[] (X is either 0 or 1) indicate the 
+ *  products that are part of the sum F[X]. 
+ *
+ *  For example, if F1(x2,x1,x0)=SOP(2,4,7) and F0(x2,x1,x0)=SOP(1,5) then 
+ *  the following HDL code implements F1 and F2 using a single ROM8x2 chip:
+ *
+ *  CHIP F1F0 {
+ *	IN  	x[3];
+ *	OUT	F[2];
+ *	PARTS:
+ *	ROM8x2( address=x,
+ *	
+ *		F1fuse[0]=0, F1fuse[1]=0, F1fuse[2]=1, F1fuse[3]=0,
+ *		F1fuse[4]=1, F1fuse[5]=0, F1fuse[6]=0, F1fuse[7]=1,
+ *		
+ *		F0fuse[0]=0, F0fuse[1]=1, F0fuse[2]=0, F0fuse[3]=0,
+ *		F0fuse[4]=0, F0fuse[5]=1, F0fuse[6]=0, F0fuse[7]=0,
+ *		
+ *		F=F);
+ *  }
+ */
+
+CHIP ROM8x2 {
+	IN  	address[3],	// The input address 
+		F1fuse[8], 	// fuses of output F1 
+		F0fuse[8]; 	// fuses of output F0
+	OUT 	F[2];
+
+	PARTS:
+
+
+	Dec3x8(in[0]=address[0],in[1]=address[1],in[2]=address[2],enable=true,out[0]=out0,out[1]=out1,out[2]=out2,out[3]=out3,out[4]=out4,out[5]=out5,out[6]=out6,out[7]=out7);
+
+	And(a=out0, b=F1fuse[0], out=F1out0);
+	And(a=out1, b=F1fuse[1], out=F1out1);
+	And(a=out2, b=F1fuse[2], out=F1out2);
+	And(a=out3, b=F1fuse[3], out=F1out3);
+	And(a=out4, b=F1fuse[4], out=F1out4);
+	And(a=out5, b=F1fuse[5], out=F1out5);
+	And(a=out6, b=F1fuse[6], out=F1out6);
+	And(a=out7, b=F1fuse[7], out=F1out7);
+
+	And(a=out0, b=F0fuse[0], out=F0out0);
+	And(a=out1, b=F0fuse[1], out=F0out1);
+	And(a=out2, b=F0fuse[2], out=F0out2);
+	And(a=out3, b=F0fuse[3], out=F0out3);
+	And(a=out4, b=F0fuse[4], out=F0out4);
+	And(a=out5, b=F0fuse[5], out=F0out5);
+	And(a=out6, b=F0fuse[6], out=F0out6);
+	And(a=out7, b=F0fuse[7], out=F0out7);
+
+	Or8way(in[0]=F1out0,in[1]=F1out1,in[2]=F1out2,in[3]=F1out3,in[4]=F1out4,in[5]=F1out5,in[6]=F1out6,in[7]=F1out7,out=F[1]);
+	Or8way(in[0]=F0out0,in[1]=F0out1,in[2]=F0out2,in[3]=F0out3,in[4]=F0out4,in[5]=F0out5,in[6]=F0out6,in[7]=F0out7,out=F[0]);
+
+	
+}

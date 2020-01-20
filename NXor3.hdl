@@ -1,0 +1,13 @@
+
+/**
+ *  Not  Exclusive-or3 gate: out = Not(a Xor b Xor c).
+ */
+
+CHIP NXor3 {
+    IN a, b, c;
+    OUT out;
+
+    PARTS:
+    Xor3(a=a, b=b, c=c, out=w1);
+    Not(in=w1, out=out);
+}

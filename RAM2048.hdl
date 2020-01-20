@@ -1,0 +1,30 @@
+/******************************************************************************
+  A RAM chip with a capacity of 2048 words. 
+  The word size is 16 bit. 
+  Use the RAM64 chip that was implemented in class or 
+  other chips that you create using this chip.
+*******************************************************************************/
+
+CHIP RAM2048{
+    IN	in[16], load, address[11];
+    OUT out[16];
+
+    PARTS:
+ // load = 1 => Wrtie
+ // load = 0 => Read
+ 
+
+  DMux8Way(in=load, sel=address[8..10], a=load1, b=load2, c=load3, d=load4, e=load5, f=load6, g=load7, h=load8);
+
+  RAM256(in[0..15]=in[0..15], load=load1, address[0..7]=address[0..7], out=a);
+  RAM256(in[0..15]=in[0..15], load=load2, address[0..7]=address[0..7], out=b);
+  RAM256(in[0..15]=in[0..15], load=load3, address[0..7]=address[0..7], out=c);
+  RAM256(in[0..15]=in[0..15], load=load4, address[0..7]=address[0..7], out=d);
+  RAM256(in[0..15]=in[0..15], load=load5, address[0..7]=address[0..7], out=e);
+  RAM256(in[0..15]=in[0..15], load=load6, address[0..7]=address[0..7], out=f);
+  RAM256(in[0..15]=in[0..15], load=load7, address[0..7]=address[0..7], out=g);
+  RAM256(in[0..15]=in[0..15], load=load8, address[0..7]=address[0..7], out=h);
+  
+  Mux8Way16(a=a, b=b, c=c, d=d, e=e, f=f, g=g, h=h, sel=address[8..10], out=out[0..15]);
+
+}

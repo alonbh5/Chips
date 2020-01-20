@@ -1,0 +1,14 @@
+/**
+ * Nor gate: out = 1 if {a==0 and b==0}, 0 otherwise
+ */
+
+CHIP Nor {
+    IN a, b;
+    OUT out;
+
+    PARTS:
+    Nand(a=a, b=a, out=nota);
+    Nand(a=b, b=b, out=notb);
+    Nand(a=nota, b=notb, out=w1);
+    Nand(a=w1, b=w1, out=out);
+}

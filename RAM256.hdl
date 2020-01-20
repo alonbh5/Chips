@@ -1,0 +1,20 @@
+/******************************************************************************
+  bUILD RAM256 USING 2 RAM64
+*******************************************************************************/
+
+CHIP RAM256{
+    IN	in[16], load, address[8];
+    OUT out[16];
+
+    PARTS:
+   
+  DMux4Way(in=load, sel=address[6..7], a=load1, b=load2, c=load3, d=load4);
+
+  RAM64(in[0..15]=in[0..15], load=load1, address[0..5]=address[0..5], out=a);
+  RAM64(in[0..15]=in[0..15], load=load2, address[0..5]=address[0..5], out=b);
+  RAM64(in[0..15]=in[0..15], load=load3, address[0..5]=address[0..5], out=c);
+  RAM64(in[0..15]=in[0..15], load=load4, address[0..5]=address[0..5], out=d);
+
+  Mux4Way16(a=a, b=b, c=c, d=d, sel=address[6..7], out=out[0..15]);
+
+}

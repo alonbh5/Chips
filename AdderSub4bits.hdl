@@ -1,0 +1,25 @@
+/******************************************************************************
+   Implement in HDL a 4-bit adder/subtractor as shown in class.
+*******************************************************************************/
+
+CHIP Ex2Q6 {
+    IN 	a[4],b[4],SEL;
+	OUT out[4],OverFlow;
+
+    PARTS:
+    // Put your implementation here 
+    Xor(a=b[0], b=SEL, out=B0);
+    FullAdder(a=a[0], b=B0, c=SEL, sum=out[0], carry=C1);
+
+    Xor(a=b[1], b=SEL, out=B1);
+    FullAdder(a=a[1], b=B1, c=C1, sum=out[1], carry=C2);
+
+    Xor(a=b[2], b=SEL, out=B2);
+    FullAdder(a=a[2], b=B2, c=C2, sum=out[2], carry=C3);
+
+    Xor(a=b[3], b=SEL, out=B3);
+    FullAdder(a=a[3], b=B3, c=C3, sum=out[3], carry=C4);
+
+    Xor(a=C4, b=C3, out=OverFlow);
+
+}

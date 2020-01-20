@@ -1,0 +1,82 @@
+/******************************************************************************
+    An 8-bit register based on DFF units which has:
+	a. control inputs: clear, pload, sload and dir (shift direction) 
+	b. data inputs: inRight, inLeft, in[8]. 
+	c. data outputs: out[8], outRight, outLeft
+	The register operates as follows:
+	IF (clear==1) THEN zero the content of the register
+	ELSE IF (pload==1) THEN set the register to in
+	ELSE IF (sload==1) and (dir=0) THEN input inLeft is serially inserted to
+           the left (MSB), the content is shifted to the right and the LSB is
+           output to outRight
+	ELSE IF (sload==1) and (dir=1) THEN input inRight is serially inserted to
+           the right (LSB) and the content is shifted to the left and the MSB 
+           is output to outLeft
+	ELSE the content of the register should remain the same
+*******************************************************************************/
+
+CHIP bit8register {
+    IN 	clear, pload, sload, dir,
+	inRight, inLeft, in[8];
+    OUT outRight, outLeft, out[8];
+
+    PARTS:
+
+	Mux(a=Q1, b=inRight, sel=dir, out=leftorright0);//if dir = 1 choose shift from inright (to LSB) else need to get from Q1
+	Mux(a=Q0, b=leftorright0, sel=sload, out=in0a); //if sload = 1 then check what dir of shift is else dont change anything
+	Mux(a=in0a, b=in[0], sel=pload, out=in0); //if pload=1 then take in[0] else take sload
+	Mux(a=in0, b=false, sel=clear, out=d0); //if clear=1 then send 0
+
+	DFF(in=d0, out=Q0,out=outLeft,out=out[0]); //LSB
+
+	Mux(a=Q2, b=Q0, sel=dir, out=leftorright1);//if dir = 1 choose shift from Q0  else need to get from Q2
+	Mux(a=Q1, b=leftorright1, sel=sload, out=in1a); //if sload = 1 then check what dir of shift is else dont change anything
+	Mux(a=in1a, b=in[1], sel=pload, out=in1); //if pload=1 then take in[0] else take sload
+	Mux(a=in1, b=false, sel=clear, out=d1); //if clear=1 then send 0
+
+	DFF(in=d1, out=Q1,out=out[1]); //---DFF 1
+
+	Mux(a=Q3, b=Q1, sel=dir, out=leftorright2);//if dir = 1 choose shift from Q1  else need to get from Q3
+	Mux(a=Q2, b=leftorright2, sel=sload, out=in2a); //if sload = 1 then check what dir of shift is else dont change anything
+	Mux(a=in2a, b=in[2], sel=pload, out=in2); //if pload=1 then take in[0] else take sload
+	Mux(a=in2, b=false, sel=clear, out=d2); //if clear=1 then send 0
+
+	DFF(in=d2, out=Q2,out=out[2]);//---DFF 2
+
+	Mux(a=Q4, b=Q2, sel=dir, out=leftorright3);//if dir = 1 choose shift from Q2  else need to get from Q4
+	Mux(a=Q3, b=leftorright3, sel=sload, out=in3a); //if sload = 1 then check what dir of shift is else dont change anything
+	Mux(a=in3a, b=in[3], sel=pload, out=in3); //if pload=1 then take in[0] else take sload
+	Mux(a=in3, b=false, sel=clear, out=d3); //if clear=1 then send 0
+
+	DFF(in=d3, out=Q3,out=out[3]);//---DFF 3
+	
+	Mux(a=Q5, b=Q3, sel=dir, out=leftorright4);//if dir = 1 choose shift from Q3  else need to get from Q5
+	Mux(a=Q4, b=leftorright4, sel=sload, out=in4a); //if sload = 1 then check what dir of shift is else dont change anything
+	Mux(a=in4a, b=in[4], sel=pload, out=in4); //if pload=1 then take in[0] else take sload
+	Mux(a=in4, b=false, sel=clear, out=d4); //if clear=1 then send 0
+
+	DFF(in=d4, out=Q4,out=out[4]);//---DFF 4
+	
+	Mux(a=Q6, b=Q4, sel=dir, out=leftorright5);//if dir = 1 choose shift from Q4  else need to get from Q6
+	Mux(a=Q5, b=leftorright5, sel=sload, out=in5a); //if sload = 1 then check what dir of shift is else dont change anything
+	Mux(a=in5a, b=in[5], sel=pload, out=in5); //if pload=1 then take in[0] else take sload
+	Mux(a=in5, b=false, sel=clear, out=d5); //if clear=1 then send 0
+
+	DFF(in=d5, out=Q5,out=out[5]);//---DFF 5
+	
+	Mux(a=Q7, b=Q5, sel=dir, out=leftorright6);//if dir = 1 choose shift from Q5  else need to get from Q6
+	Mux(a=Q6, b=leftorright6, sel=sload, out=in6a); //if sload = 1 then check what dir of shift is else dont change anything
+	Mux(a=in6a, b=in[6], sel=pload, out=in6); //if pload=1 then take in[0] else take sload
+	Mux(a=in6, b=false, sel=clear, out=d6); //if clear=1 then send 0
+
+	DFF(in=d6, out=Q6,out=out[6]);//---DFF 6
+	
+
+	Mux(a=inLeft, b=Q6, sel=dir, out=leftorright7);//if dir = 0 choose shift from inright (to LSB) else need to get from Q6
+	Mux(a=Q7, b=leftorright7, sel=sload, out=in7a); //if sload = 1 then check what dir of shift is else dont change anything
+	Mux(a=in7a, b=in[7], sel=pload, out=in7); //if pload=1 then take in[0] else take sload
+	Mux(a=in7, b=false, sel=clear, out=d7); //if clear=1 then send 0
+
+	DFF(in=d7, out=Q7,out=outRight,out=out[7]); //MSB
+
+}
